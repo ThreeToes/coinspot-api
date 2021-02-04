@@ -1,0 +1,636 @@
+openapi: "3.0.0"
+info:
+  title: CoinSpot API Spec
+  version: 1.0.0
+servers:
+  - description: Coinspot main site
+    url: "https://www.coinspot.com.au/"
+paths:
+  /pubapi/latest:
+    get:
+      tags:
+        - prices
+        - publicapi
+      operationId: latestPrices
+      summary: Get latest coin prices
+      responses:
+        200:
+          $ref: '#/components/responses/LatestPricesResponse'
+  /api/orders:
+    post:
+      description: List all open orders
+      operationId: listOpenOrders
+      requestBody:
+        $ref: '#/components/requestBodies/OpenOrdersRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/OpenOrdersResponse'
+      tags:
+        - api
+        - orders
+  /api/orders/history:
+    post:
+      description: List order history
+      operationId: listOrderHistory
+      requestBody:
+        $ref: '#/components/requestBodies/HistoricalOrderRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/HistoricOrderResponse'
+      tags:
+        - api
+        - orders
+  /api/my/coin/deposit:
+    post:
+      description: Generate deposit coin address
+      operationId: depositCoins
+      requestBody:
+        $ref: '#/components/requestBodies/DepositCoinsRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/DepositCoinsResponse'
+      tags:
+        - api
+  /api/quote/buy:
+    post:
+      tags:
+        - buy
+        - quote
+      description: Get a buy quote
+      operationId: quickBuyQuote
+      requestBody:
+        $ref: '#/components/requestBodies/QuickBuyRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/QuickBuyResponse'
+  /api/quote/sell:
+    post:
+      tags:
+        - sell
+        - quote
+      description: Get a sell quote
+      operationId: quickSellQuote
+      requestBody:
+        $ref: '#/components/requestBodies/QuickSellRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/QuickSellResponse'
+  /api/my/balances:
+    post:
+      tags:
+        - balances
+        - user
+      description: List balances
+      operationId: listBalances
+      requestBody:
+        $ref: '#/components/requestBodies/ListBalancesRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/ListBalancesResponse'
+  /api/my/orders:
+    post:
+      tags:
+        - orders
+        - user
+      description: List user's open orders
+      operationId: myOpenOrders
+      requestBody:
+        $ref: '#/components/requestBodies/MyOpenOrdersRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/MyOpenOrdersResponse'
+
+  /api/my/buy:
+    post:
+      tags:
+        - buy
+      description: Place a buy order
+      operationId: buyCoins
+      requestBody:
+        $ref: '#/components/requestBodies/BuySellRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/StatusMessageResponse'
+  /api/my/sell:
+    post:
+      tags:
+        - sell
+      description: Place a sell order
+      operationId: sellCoins
+      requestBody:
+        $ref: '#/components/requestBodies/BuySellRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/StatusMessageResponse'
+  /api/my/buy/cancel:
+    post:
+      tags:
+        - buy
+        - cancel
+      description: Cancel a buy order
+      operationId: cancelBuy
+      requestBody:
+        $ref: '#/components/requestBodies/CancelRequest'
+      responses:
+        200:
+          $ref: '#/components/schemas/StatusMessage'
+  /api/my/sell/cancel:
+    post:
+      tags:
+        - sell
+        - cancel
+      description: Cancel a sell order
+      operationId: cancelSell
+      requestBody:
+        $ref: '#/components/requestBodies/CancelRequest'
+      responses:
+        200:
+          $ref: '#/components/schemas/StatusMessage'
+
+components:
+  requestBodies:
+    CancelRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - id
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              id:
+                type: string
+
+
+    BuySellRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+              - amount
+              - rate
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+              amount:
+                type: number
+                format: float64
+              rate:
+                type: number
+                format: float64
+
+    MyOpenOrdersRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+
+    ListBalancesRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+
+    QuickSellRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+              - amount
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+              amount:
+                type: number
+                format: float64
+
+    QuickBuyRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+              - amount
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+              amount:
+                type: number
+                format: double
+
+    DepositCoinsRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+
+    HistoricalOrderRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+                description: Short name of the coin
+      description: Request for historical orders
+
+    OpenOrdersRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - nonce
+              - cointype
+            properties:
+              nonce:
+                $ref: '#/components/schemas/Nonce'
+              cointype:
+                type: string
+                description: Short name of the coin (e.g. 'BTC', 'DOGE')
+
+  responses:
+    StatusMessageResponse:
+      description: Response from placing a buy order
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              message:
+                type: string
+    MyOpenOrdersResponse:
+      description: Response with the users' open orders response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - buyorders
+              - sellorders
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              buyorders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpenOrder'
+              sellorders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpenOrder'
+              message:
+                type: string
+    ListBalancesResponse:
+      description: List balance response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - balances
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              balances:
+                type: object
+                description: A map of floats
+                additionalProperties:
+                  type: number
+                  format: float64
+              message:
+                type: string
+
+    QuickSellResponse:
+      description: Response from the quick sell quote
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - quote
+              - timeframe
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              quote:
+                type: number
+                format: float64
+              timeframe:
+                type: number
+                format: float64
+              message:
+                type: string
+
+    QuickBuyResponse:
+      description: Quick buy quote response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - quote
+              - timeframe
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              quote:
+                type: number
+                format: double
+              timeframe:
+                type: number
+                format: double
+              message:
+                type: string
+
+    DepositCoinsResponse:
+      description: Deposit coins response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - address
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              cointype:
+                type: string
+              message:
+                type: string
+
+    HistoricOrderResponse:
+      description: Historic order response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - orders
+            description: Response for historical orders
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              orders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistoricalOrder'
+              message:
+                type: string
+                description: Error message
+
+    OpenOrdersResponse:
+      description: Open orders response
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - buyorders
+              - sellorders
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              buyorders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpenOrder'
+              sellorders:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpenOrder'
+              message:
+                type: string
+                description: Error message
+
+    LatestPricesResponse:
+      description: Latest price response
+      content:
+        application/json:
+          schema:
+            type: object
+            example:
+              normal:
+                value:
+                  {
+                    "status": "ok",
+                    "prices": {
+                      "btc": {
+                        "bid": "47482.32",
+                        "ask": "47700",
+                        "last": "47686.73"
+                      },
+                      "ltc": {
+                        "bid": "195.71",
+                        "ask": "196.91",
+                        "last": "195.82"
+                      },
+                      "doge": {
+                        "bid": "0.0426",
+                        "ask": "0.0427992",
+                        "last": "0.0427999"
+                      },
+                      "eth": {
+                        "bid": "2025.09",
+                        "ask": "2035.077999",
+                        "last": "2039.14"
+                      },
+                      "powr": {
+                        "bid": "0.159",
+                        "ask": "0.165",
+                        "last": "0.164289"
+                      },
+                      "ans": {
+                        "bid": "32",
+                        "ask": "32.302319",
+                        "last": "32.3"
+                      },
+                      "xrp": {
+                        "bid": "0.4908",
+                        "ask": "0.4993339",
+                        "last": "0.4993"
+                      },
+                      "trx": {
+                        "bid": "0.044909",
+                        "ask": "0.045019",
+                        "last": "0.045059"
+                      },
+                      "eos": {
+                        "bid": "3.9",
+                        "ask": "3.989999",
+                        "last": "3.99"
+                      },
+                      "str": {
+                        "bid": "0.44",
+                        "ask": "0.44379999",
+                        "last": "0.44"
+                      },
+                      "rfox": {
+                        "bid": "0.03160001",
+                        "ask": "0.032",
+                        "last": "0.032"
+                      },
+                      "rhoc": {
+                        "bid": "0.081001",
+                        "ask": "0.179999",
+                        "last": "0.19"
+                      },
+                      "gas": {
+                        "bid": "2.98",
+                        "ask": "3.05",
+                        "last": "3"
+                      }
+                    }
+                  }
+            required:
+              - status
+              - prices
+            properties:
+              status:
+                $ref: '#/components/schemas/StatusMessage'
+              prices:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PriceObject'
+              message:
+                type: string
+
+  schemas:
+    Nonce:
+      type: integer
+      description: Any integer value which must always be greater than the previous requests nonce value.
+
+    StatusMessage:
+      type: string
+      description: API Response status
+      enum:
+        - ok
+        - error
+    HistoricalOrder:
+      type: object
+      description: Historical order object. Describes a past order
+      required:
+        - amount
+        - rate
+        - total
+        - coin
+        - market
+      properties:
+        amount:
+          type: number
+          format: double
+        rate:
+          type: number
+          format: double
+        total:
+          type: number
+          format: double
+        coin:
+          type: string
+        market:
+          type: string
+    OpenOrder:
+      description: A currently open order awaiting fulfillment
+      type: object
+      required:
+        - amount
+        - rate
+        - total
+        - coin
+        - market
+      properties:
+        amount:
+          type: number
+          format: double
+          description: Number of coins ordered
+        rate:
+          type: number
+          format: double
+          description: Rate to purchase at
+        total:
+          type: number
+          format: double
+        coin:
+          type: string
+
+    PriceObject:
+        type: object
+        required:
+          - bid
+          - ask
+          - last
+        properties:
+          bid:
+            type: string
+            description: Bid price
+          ask:
+            type: string
+            description: Asking price
+          last:
+            type: string
+            description: Last price
+
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: key
+      description: Your API key generated from the settings page
+    SignKey:
+      type: apiKey
+      in: header
+      name: sign
+      description: The POST data is to be signed using your secret key according to HMAC-SHA512 method
+
+

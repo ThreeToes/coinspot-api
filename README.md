@@ -27,6 +27,8 @@ func main() {
 * Proper string field processing. Parts of the API returns 
   strings where it really should be floats
 * Truncate floats in requests where applicable
-* OpenAPI doc (Coinspot docs are a bit vague)
-* Read only API client
-* Proper testing around calls
+* ~OpenAPI doc (Coinspot docs are a bit vague)~
+  * Tidy up OpenAPI spec
+  * Add readonly methods
+  * Once OpenAPI is confirmed correct, generate
+    client from it
